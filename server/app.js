@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const PORT = 5000;
-
+const cors = require('cors');
 //db config
 const { MONGOURI, JWT_SECRET } = require('./keys')
 const mongoose = require('mongoose')
@@ -22,6 +22,8 @@ mongoose.connection.on('error', (err) => {
 // route
 const auth = require('./routes/auth')
 const post = require('./routes/post')
+
+app.use(cors())
 
 app.use(express.json());
 

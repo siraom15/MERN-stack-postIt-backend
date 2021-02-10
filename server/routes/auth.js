@@ -17,6 +17,7 @@ router.get('/', (req, res) => {
     res.end()
 })
 router.post('/signup', (req, res) => {
+    console.log("Called signup");
     const { name, email, password } = req.body;
     if (!email || !password || !name) {
         return res.status(422).json({
@@ -27,12 +28,12 @@ router.post('/signup', (req, res) => {
         .then((savedUser) => {
             if (savedUser) {
                 return res.status(422).json({
-                    error: "Email is already used"
+                    status : "error",
+                    message: "Email is already used"
                 })
             }
             bcrypt.hash(password, saltRounds, function (err, hashPassword) {
                 if (err) console.log(err);
-                console.log(hashPassword);
                 const user = new User({
                     email,
                     name,
@@ -42,7 +43,7 @@ router.post('/signup', (req, res) => {
                     .then(user => {
                         return res.status(200).json({
                             status: "success",
-                            message: "saved successfully"
+                            message: "Sign Up Success"
                         })
                     })
                     .catch(err => {
@@ -63,14 +64,16 @@ router.post('/signin', (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(422).json({
-            "error": "Fill the form"
+            status : "error",
+            message: "Fill the form"
         })
     }
     User.findOne({ email: email })
         .then(savedUser => {
             if (!savedUser) {
                 return res.status(422).json({
-                    "error": "Email Not Found"
+                    status : "error",
+                    message: "Email Not Found"
                 })
             }
             bcrypt.compare(password, savedUser.password, function (err, result) {
@@ -84,8 +87,8 @@ router.post('/signin', (req, res) => {
                     })
                 } else {
                     res.status(422).json({
-                        "status": "failure",
-                        "message": "password not match"
+                        "status": "error",
+                        "message": "Password not match"
                     })
                 }
             });
